@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Pixelf - Hesap Oluştur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Register Page Özel Stilleri */
+        .register-container {
+            max-width: 480px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .register-form {
+            background: var(--pixel-sidebar);
+            padding: 40px;
+            border: 4px solid var(--pixel-primary);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(252, 191, 73, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--pixel-primary), var(--pixel-secondary), var(--pixel-success));
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .register-title {
+            color: var(--pixel-primary);
+            font-size: 32px;
+            margin-bottom: 16px;
+            font-family: 'Press Start 2P', monospace;
+            text-shadow: 0 0 10px rgba(252, 191, 73, 0.3);
+        }
+
+        .register-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+
+        .register-form-content {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            background: var(--pixel-bg);
+            border: 2px solid var(--pixel-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--pixel-primary);
+            box-shadow: 0 0 0 3px rgba(252, 191, 73, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            background: var(--pixel-bg);
+            border: 2px solid var(--pixel-border);
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .checkmark {
+            background: var(--pixel-primary);
+            border-color: var(--pixel-primary);
+        }
+
+        .checkbox-container input[type="checkbox"]:checked + .checkmark::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--pixel-bg);
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .register-submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--pixel-primary), var(--pixel-secondary));
+            color: var(--pixel-bg);
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(252, 191, 73, 0.4);
+        }
+
+        .register-submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .register-submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .register-submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .form-divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .form-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--pixel-border);
+        }
+
+        .form-divider span {
+            background: var(--pixel-sidebar);
+            padding: 0 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .back-to-login-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: transparent;
+            color: var(--pixel-secondary);
+            border: 2px solid var(--pixel-secondary);
+            border-radius: 8px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-login-btn:hover {
+            background: var(--pixel-secondary);
+            color: var(--pixel-bg);
+            transform: translateY(-1px);
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--pixel-border);
+            border-top: 4px solid var(--pixel-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-indicator p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+            animation: slideInScale 0.5s ease-out;
+        }
+
+        @keyframes slideInScale {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: bounce 1s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .success-message h3 {
+            color: var(--pixel-success);
+            font-size: 24px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .success-message p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .countdown {
+            width: 60px;
+            height: 60px;
+            background: var(--pixel-primary);
+            color: var(--pixel-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 auto;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(252, 191, 73, 0.7);
+            }
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(252, 191, 73, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(252, 191, 73, 0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .register-form {
+                padding: 30px 24px;
+                margin: 20px;
+            }
+            
+            .register-title {
+                font-size: 24px;
+            }
+            
+            .register-subtitle {
+                font-size: 14px;
+            }
+            
+            .form-input {
+                padding: 14px;
+            }
+            
+            .register-submit-btn {
+                padding: 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+
+<body style="background: var(--pixel-bg); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+    
+    <!-- Kayıt Formu -->
+    <div class="register-container">
+        <div class="register-form">
+            <!-- Header -->
+            <div class="register-header">
+                <h1 class="register-title">🎮 Pixelf</h1>
+                <p class="register-subtitle">Hoşgeldiniz! Yeni hesabınızı oluşturun</p>
+            </div>
+
+            <!-- Form -->
+            <form id="registerForm" class="register-form-content">
+                <div class="form-group">
+                    <label class="form-label">👤 Ad Soyad</label>
+                    <input type="text" id="fullName" class="form-input" placeholder="Adınız Soyadınız" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">📧 E-posta Adresi</label>
+                    <input type="email" id="email" class="form-input" placeholder="ornek@gmail.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔒 Şifre</label>
+                    <input type="password" id="password" class="form-input" placeholder="En az 6 karakter" required>
+                    <small style="color: var(--text-muted); font-size: 12px;">Şifreniz en az 6 karakter olmalıdır</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">🔒 Şifre Tekrar</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="Şifrenizi tekrar girin" required>
+                </div>
+
+                <!-- Terms -->
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="termsCheck" required>
+                        <span class="checkmark"></span>
+                        <span style="font-size: 13px; color: var(--text-secondary);">
+                            <a href="#" style="color: var(--pixel-primary);">Kullanım Şartları</a> ve 
+                            <a href="#" style="color: var(--pixel-primary);">Gizlilik Politikası</a>'nı kabul ediyorum
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Buttons -->
+                <button type="submit" id="registerBtn" class="register-submit-btn">
+                    ✨ Hesap Oluştur
+                </button>
+
+                <div class="form-divider">
+                    <span>veya</span>
+                </div>
+
+                <a href="index.html" class="back-to-login-btn">
+                    🔙 Giriş Sayfasına Dön
+                </a>
+            </form>
+
+            <!-- Loading -->
+            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                <div class="spinner"></div>
+                <p>Hesabınız oluşturuluyor...</p>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="success-message" style="display: none;">
+                <div class="success-icon">🎉</div>
+                <h3>Hesabınız Başarıyla Oluşturuldu!</h3>
+                <p>📧 E-posta doğrulama linki gönderildi. Lütfen e-postanızı kontrol edin.<br>
+                3 saniye sonra giriş sayfasına yönlendirileceksiniz...</p>
+                <div class="countdown" id="countdown">3</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script>
+        // Global variables
+        let isRegistering = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRegisterPage();
+            initializeEmailJS();
+        });
+
+        function initializeEmailJS() {
+            // EmailJS'yi initialize et
+            emailjs.init('YOUR_PUBLIC_KEY'); // Buraya EmailJS public key'inizi yazın
+        }
+
+        async function sendWelcomeEmailJS(email, fullName) {
+            try {
+                const templateParams = {
+                    user_name: fullName,
+                    user_email: email,
+                    to_email: email,
+                    company_name: 'Pixelf',
+                    app_url: window.location.origin
+                };
+
+                const result = await emailjs.send(
+                    'YOUR_SERVICE_ID',  // EmailJS Service ID
+                    'YOUR_TEMPLATE_ID', // EmailJS Template ID
+                    templateParams
+                );
+
+                console.log('✅ Hoşgeldin e-postası gönderildi:', result);
+                return result;
+            } catch (error) {
+                console.error('❌ E-posta gönderme hatası:', error);
+                // E-posta hatası olsa da kayıt devam etsin
+                return null;
+            }
+        }
+
+        function initializeRegisterPage() {
+            const registerForm = document.getElementById('registerForm');
+            const registerBtn = document.getElementById('registerBtn');
+
+            // Form submit
+            registerForm.addEventListener('submit', handleRegisterSubmit);
+
+            // Enter key support
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !isRegistering) {
+                    handleRegisterSubmit(e);
+                }
+            });
+
+            console.log('🎮 Kayıt sayfası hazır!');
+        }
+
+        async function handleRegisterSubmit(e) {
+            e.preventDefault();
+            
+            if (isRegistering) return;
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+            const termsCheck = document.getElementById('termsCheck').checked;
+
+            // Validation
+            if (!fullName || !email || !password || !confirmPassword) {
+                showNotification('⚠️ Lütfen tüm alanları doldurun!', 'warning');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showNotification('⚠️ Geçerli bir e-posta adresi girin!', 'warning');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('⚠️ Şifre en az 6 karakter olmalı!', 'warning');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('⚠️ Şifreler eşleşmiyor!', 'warning');
+                return;
+            }
+
+            if (!termsCheck) {
+                showNotification('⚠️ Kullanım şartlarını kabul etmelisiniz!', 'warning');
+                return;
+            }
+
+            // Start registration
+            isRegistering = true;
+            showLoading();
+
+            try {
+                // Firebase ile kayıt ol
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Kullanıcı profilini güncelle (ad soyad)
+                await user.updateProfile({
+                    displayName: fullName
+                });
+
+                // E-posta doğrulama gönder (Firebase otomatik)
+                await user.sendEmailVerification();
+
+                // Hoşgeldin e-postası gönder (EmailJS ile)
+                await sendWelcomeEmailJS(email, fullName);
+
+                // Firestore'a kullanıcı bilgilerini kaydet
+                await firebase.firestore().collection('users').doc(user.uid).set({
+                    fullName: fullName,
+                    email: email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    isActive: true,
+                    emailVerified: false,
+                    registrationIP: await getUserIP(),
+                    welcomeEmailSent: true
+                });
+
+                // Hoşgeldin bildirimi göster
+                showWelcomeNotification(fullName);
+
+                // Başarı göster
+                showSuccess();
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                hideLoading();
+                isRegistering = false;
+
+                if (error.code === 'auth/email-already-in-use') {
+                    showNotification('❌ Bu e-posta zaten kullanılıyor!', 'error');
+                } else if (error.code === 'auth/weak-password') {
+                    showNotification('❌ Şifre çok zayıf!', 'error');
+                } else if (error.code === 'auth/invalid-email') {
+                    showNotification('❌ Geçersiz e-posta formatı!', 'error');
+                } else {
+                    showNotification('❌ Kayıt olunamadı: ' + error.message, 'error');
+                }
+            }
+        }
+
+        async function sendWelcomeEmail(email, fullName) {
+            // Firebase otomatik e-posta doğrulama gönderecek
+            console.log(`📧 E-posta doğrulama gönderiliyor: ${email}`);
+            return Promise.resolve();
+        }
+
+        function showWelcomeNotification(fullName) {
+            showNotification(`🎉 Hoş geldin ${fullName}! E-posta doğrulama linki gönderildi.`, 'success');
+        }
+
+        async function getUserIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return 'unknown';
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loadingIndicator').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
+        function showSuccess() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Geri sayım başlat
+            let count = 3;
+            const countdownElement = document.getElementById('countdown');
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownElement.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            Object.assign(notification.style, {
+                position: 'fixed',
+                top: '20px',
+                right: '20px',
+                padding: '12px 20px',
+                borderRadius: '6px',
+                color: 'white',
+                fontWeight: '600',
+                fontSize: '14px',
+                zIndex: '3000',
+                maxWidth: '400px',
+                wordWrap: 'break-word',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                transform: 'translateX(400px)',
+                transition: 'transform 0.3s ease'
+            });
+            
+            switch (type) {
+                case 'success':
+                    notification.style.background = '#06ffa5';
+                    notification.style.color = '#0f0f23';
+                    break;
+                case 'warning':
+                    notification.style.background = '#f77f00';
+                    notification.style.color = '#0f0f23';
+                    break;
+                case 'error':
+                    notification.style.background = '#ff006e';
+                    break;
+                default:
+                    notification.style.background = '#fcbf49';
+                    notification.style.color = '#0f0f23';
+            }
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 4000);
+            
+            notification.addEventListener('click', () => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            });
+        }
+    </script>
+</body>
+</html>

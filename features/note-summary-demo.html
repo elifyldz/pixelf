@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Note Summary Demo - Pixelf Feature</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f23;
+            color: #ffffff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px solid #fcbf49;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-title {
+            color: #fcbf49;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .demo-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .input-section, .output-section {
+            background: #0f0f23;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #2d1b69;
+        }
+        
+        .section-title {
+            color: #fcbf49;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .note-textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            background: #1a1a2e;
+            border: 2px solid #2d1b69;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        .note-textarea:focus {
+            outline: none;
+            border-color: #fcbf49;
+        }
+        
+        .analyze-btn {
+            width: 100%;
+            padding: 15px;
+            background: #fcbf49;
+            color: #0f0f23;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .analyze-btn:hover {
+            background: #f77f00;
+            transform: translateY(-2px);
+        }
+        
+        .analyze-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2d1b69;
+            border-radius: 8px;
+        }
+        
+        .result-title {
+            color: #06ffa5;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .result-content {
+            color: #ffffff;
+            line-height: 1.5;
+        }
+        
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tag {
+            background: #fcbf49;
+            color: #0f0f23;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .sample-notes {
+            margin-top: 15px;
+        }
+        
+        .sample-btn {
+            background: #2d1b69;
+            color: #ffffff;
+            border: 1px solid #fcbf49;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sample-btn:hover {
+            background: #fcbf49;
+            color: #0f0f23;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #fcbf49;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1 class="demo-title">🤖 AI Note Summary Demo</h1>
+            <p class="demo-description">Pixelf'in yapay zeka destekli not özetleme özelliği</p>
+        </div>
+        
+        <div class="demo-layout">
+            <div class="input-section">
+                <h3 class="section-title">📝 Not Girişi</h3>
+                <textarea 
+                    class="note-textarea" 
+                    id="noteInput" 
+                    placeholder="Notunuzu buraya yazın veya aşağıdaki örnek notlardan birini seçin..."
+                ></textarea>
+                
+                <div class="sample-notes">
+                    <div style="color: #aaa; font-size: 12px; margin-bottom: 8px;">Örnek Notlar:</div>
+                    <button class="sample-btn" onclick="loadSample(1)">📋 Toplantı Notları</button>
+                    <button class="sample-btn" onclick="loadSample(2)">💡 Proje Fikirleri</button>
+                    <button class="sample-btn" onclick="loadSample(3)">📚 Araştırma Notları</button>
+                </div>
+                
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyzeNote()">
+                    🔍 AI ile Analiz Et
+                </button>
+            </div>
+            
+            <div class="output-section">
+                <h3 class="section-title">🤖 AI Analiz Sonuçları</h3>
+                <div id="resultsContainer">
+                    <div class="result-item">
+                        <div class="loading">
+                            Sol taraftan bir not girin ve "AI ile Analiz Et" butonuna tıklayın...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sampleNotes = {
+            1: `Proje Toplantısı Notları - 15 Ağustos 2024
+
+Katılımcılar: Ahmet, Ayşe, Mehmet, Zeynep
+Toplantı Süresi: 2 saat
+
+Gündem Maddeleri:
+1. Pixelf uygulamasının mevcut durumu
+2. Yeni özellik önerileri 
+3. UI/UX iyileştirmeleri
+4. Test süreci planlaması
+
+Karar Alınan Konular:
+- AI chat özelliği öncelik olacak
+- Dosya yükleme sistemi geliştirilecek
+- RAG (Retrieval Augmented Generation) entegrasyonu yapılacak
+- Hafta sonuna kadar ilk demo hazır olacak
+
+Eylem Planı:
+- Ahmet: Backend API geliştirme
+- Ayşe: Frontend tasarım güncellemeleri  
+- Mehmet: AI entegrasyonu
+- Zeynep: Test senaryoları hazırlama
+
+Sonraki toplantı: 22 Ağustos 2024, saat 14:00`,
+
+            2: `Yeni Uygulama Fikirleri - Brainstorming Sonuçları
+
+1. AI Destekli Not Alma Uygulaması
+- Otomatik özetleme yapabilir
+- Akıllı etiket önerileri sunabilir
+- Sesli not alma desteği olabilir
+- Çoklu dil desteği sağlayabilir
+
+2. Akıllı Takvim Entegrasyonu  
+- Notlarla etkinlikleri bağlayabilir
+- Otomatik hatırlatıcılar kurabilir
+- Zaman yönetimi önerileri verebilir
+- Ekip çalışması için paylaşım özellikleri
+
+3. Belge İşleme Sistemi
+- PDF ve Word dosyaları okuyabilir
+- Belgeler içinde akıllı arama yapabilir
+- Önemli bölümleri vurgulayabilir
+- Referans yönetimi sağlayabilir
+
+4. Chatbot Asistan
+- 7/24 kullanıcı desteği verebilir
+- Uygulama özelliklerini anlatabilir
+- Kullanım ipuçları paylaşabilir
+- Sorun giderme yardımı yapabilir
+
+Değerlendirme Kriterleri:
+- Teknik zorluk seviyesi
+- Kullanıcı değeri
+- Geliştirme süresi
+- Maliyet analizi`,
+
+            3: `Yapay Zeka ve Not Alma Uygulamaları Araştırması
+
+Araştırma Amacı:
+Modern not alma uygulamalarında yapay zeka kullanımını ve kullanıcı ihtiyaçlarını anlamak.
+
+Mevcut Uygulamalar:
+1. Notion AI
+   - Güçlü metin işleme
+   - Otomatik tamamlama
+   - Çeviri desteği
+   - Fiyat: Aylık $10
+
+2. Obsidian
+   - Graf tabanlı notlar
+   - Plugin sistemi
+   - Markdown desteği
+   - Fiyat: Ücretsiz (kişisel)
+
+3. Roam Research
+   - Çift yönlü bağlantılar
+   - Blok tabanlı yapı
+   - Güçlü arama
+   - Fiyat: Aylık $15
+
+Kullanıcı İhtiyaçları:
+- Hızlı not alma
+- Kolay organizasyon
+- Akıllı arama
+- Çoklu platform desteği
+- Offline çalışma
+- İş birliği özellikleri
+
+Fırsat Alanları:
+- Türkçe dil desteği eksikliği
+- Fiyat odaklı çözümler
+- Basit kullanım
+- AI özetleme
+- Sesli not alma
+
+Sonuç:
+Pixelf, kullanıcı dostu arayüzü ve Türkçe AI desteğiyle rakiplerinden farklılaşabilir.`
+        };
+        
+        function loadSample(index) {
+            document.getElementById('noteInput').value = sampleNotes[index];
+        }
+        
+        function analyzeNote() {
+            const noteText = document.getElementById('noteInput').value.trim();
+            
+            if (!noteText) {
+                alert('Lütfen analiz edilecek bir not girin!');
+                return;
+            }
+            
+            const btn = document.getElementById('analyzeBtn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Analiz Ediliyor...';
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                const analysis = generateMockAnalysis(noteText);
+                displayResults(analysis);
+                
+                btn.disabled = false;
+                btn.textContent = '🔍 AI ile Analiz Et';
+            }, 2000);
+        }
+        
+        function generateMockAnalysis(text) {
+            const wordCount = text.split(' ').length;
+            const sentences = text.split('.').length;
+            const readingTime = Math.ceil(wordCount / 200);
+            
+            // Extract key topics
+            const topics = extractTopics(text);
+            
+            // Generate summary
+            const summary = generateSummary(text);
+            
+            // Suggest tags
+            const tags = generateTags(text);
+            
+            // Determine category
+            const category = determineCategory(text);
+            
+            return {
+                summary,
+                topics,
+                tags,
+                category,
+                wordCount,
+                readingTime,
+                sentences
+            };
+        }
+        
+        function extractTopics(text) {
+            const words = text.toLowerCase().split(/\s+/);
+            const topicWords = ['proje', 'toplantı', 'araştırma', 'geliştirme', 'tasarım', 'test', 'ai', 'uygulama'];
+            const found = topicWords.filter(topic => 
+                words.some(word => word.includes(topic))
+            );
+            return found.length > 0 ? found : ['genel'];
+        }
+        
+        function generateSummary(text) {
+            const sentences = text.split('.').filter(s => s.trim().length > 20);
+            const keyPoints = sentences.slice(0, 3);
+            return `Bu not ${keyPoints.length} ana konuyu içeriyor. ${keyPoints[0]}. Önemli detaylar ve eylem planları belirtilmiş.`;
+        }
+        
+        function generateTags(text) {
+            const words = text.toLowerCase();
+            const tagMap = {
+                'toplantı': ['toplantı', 'meeting'],
+                'proje': ['proje', 'project'],
+                'araştırma': ['araştırma', 'research'],
+                'geliştirme': ['geliştirme', 'development'],
+                'ai': ['ai', 'yapay-zeka'],
+                'tasarım': ['tasarım', 'design'],
+                'test': ['test', 'testing']
+            };
+            
+            const tags = [];
+            for (const [key, variants] of Object.entries(tagMap)) {
+                if (variants.some(variant => words.includes(variant))) {
+                    tags.push(key);
+                }
+            }
+            
+            return tags.length > 0 ? tags : ['genel', 'not'];
+        }
+        
+        function determineCategory(text) {
+            const lower = text.toLowerCase();
+            if (lower.includes('toplantı') || lower.includes('meeting')) return 'İş';
+            if (lower.includes('araştırma') || lower.includes('research')) return 'Araştırma';
+            if (lower.includes('proje') || lower.includes('geliştirme')) return 'Proje';
+            if (lower.includes('fikir') || lower.includes('idea')) return 'Yaratıcı';
+            return 'Genel';
+        }
+        
+        function displayResults(analysis) {
+            const container = document.getElementById('resultsContainer');
+            
+            container.innerHTML = `
+                <div class="result-item">
+                    <div class="result-title">📄 Özet</div>
+                    <div class="result-content">${analysis.summary}</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">🏷️ Önerilen Etiketler</div>
+                    <div class="tags-container">
+                        ${analysis.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">📂 Kategori</div>
+                    <div class="result-content">${analysis.category}</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">🎯 Ana Konular</div>
+                    <div class="result-content">${analysis.topics.join(', ')}</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-title">📊 İstatistikler</div>
+                    <div class="result-content">
+                        • Kelime sayısı: ${analysis.wordCount}<br>
+                        • Cümle sayısı: ${analysis.sentences}<br>
+                        • Okuma süresi: ~${analysis.readingTime} dakika
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

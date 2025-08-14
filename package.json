@@ -1,0 +1,13 @@
+{
+  "name": "pixelf-chatbot",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node test.js"
+  },
+  "dependencies": {
+    "firebase": "^12.1.0",
+    "openai": "^5.12.2"
+  }
+}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Pixelf - AI Powered Workspace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="register-styles.css">
+    
+    <!-- Firebase CDN - DOĞRU SIRA -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+    <!-- Auth Modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-form">
+            <h2 class="auth-title">🎮 Pixelf</h2>
+            <p class="auth-subtitle">AI Destekli Akıllı Çalışma Alanına Hoş Geldiniz</p>
+            <div class="form-group">
+                <label class="form-label">E-posta Adresi</label>
+                <input type="email" id="email" class="form-input" placeholder="ornek@pixelf.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Şifre</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••">
+            </div>
+            <button id="loginBtn" class="submit-btn">🚀 Giriş Yap</button>
+            <a href="register.html" class="register-link-btn">📝 Hesap Oluştur</a>
+            <button id="demoBtn" class="demo-btn">🎮 Demo Hesabıyla Dene</button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">
+                    <div class="app-title">🎮 Pixelf</div>
+                    <div class="user-section">
+                        <span id="userEmail" class="user-email"></span>
+                        <button id="logoutBtn" class="logout-btn">Çıkış</button>
+                    </div>
+                </div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Notlar ve sayfalar...">
+                </div>
+            </div>
+            
+            <div class="notes-section">
+                <div class="section-title">Hızlı Eylemler</div>
+                <button id="newNoteBtn" class="new-note-btn">
+                    📝 Yeni Sayfa
+                </button>
+                <button id="newGroupBtn" class="new-group-btn">
+                    📁 Yeni Grup
+                </button>
+                
+                <div class="section-title" style="margin-top: 20px;">Çalışma Alanım</div>
+                <div id="notesContainer" class="notes-container">
+                    <!-- Note groups will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="main-header">
+                <h1 class="main-title">📋 Çalışma Alanı</h1>
+                <div class="header-actions">
+                    <button id="fileUploadBtn" class="header-btn">
+                        📎 Dosya Yükle
+                    </button>
+                    <button id="aiSummaryBtn" class="header-btn secondary">
+                        🤖 AI Özet
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-area">
+                <div class="editor-section">
+                    <div id="welcomeScreen" class="welcome-screen">
+                        <div class="welcome-icon">🎮</div>
+                        <h1 class="welcome-title">Pixelf'e Hoş Geldiniz!</h1>
+                        <p class="welcome-subtitle">AI destekli akıllı çalışma alanınız hazır. Notlarınızı organize edin, takvim etkinlikleri oluşturun ve yapay zeka ile daha verimli çalışın.</p>
+                        
+                        <div class="welcome-features">
+                            <div class="feature-card">
+                                <div class="feature-icon">📝</div>
+                                <div class="feature-title">Akıllı Notlar</div>
+                                <div class="feature-description">AI ile otomatik özetleme ve etiketleme</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">📅</div>
+                                <div class="feature-title">Entegre Takvim</div>
+                                <div class="feature-description">Notlarınızı etkinliklerle bağlayın</div>
+                            </div>
+                            <div class="feature-card">
+                                <div class="feature-icon">🤖</div>
+                                <div class="feature-title">AI Asistan</div>
+                                <div class="feature-description">7/24 yardımcı chatbot</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Section -->
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <h2 class="calendar-title">📅 Takvim</h2>
+                        <div class="month-nav">
+                            <button class="month-btn" id="prevMonthBtn">◀</button>
+                            <span class="current-month" id="currentMonthDisplay">Ağustos 2024</span>
+                            <button class="month-btn" id="nextMonthBtn">▶</button>
+                        </div>
+                        <button class="add-event-btn" id="addEventBtn">
+                            ➕ Etkinlik Ekle
+                        </button>
+                    </div>
+
+                    <div class="calendar-container">
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- Calendar will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Container -->
+    <div id="chatbotContainer" class="chatbot-container">
+        <div class="chatbot-header">
+            <div class="chatbot-title">🤖 Pixel Asistan</div>
+            <button class="chatbot-close" onclick="toggleChatbot()">✕</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <!-- Başlangıç mesajı -->
+            <div class="message bot">
+                <div class="message-content">
+                    Merhaba! Ben Pixel, senin AI asistanın! 🎮<br>
+                    Pixelf ile ilgili her konuda yardımcı olabilirim. Ne yapmak istiyorsun?
+                </div>
+                <div class="message-time">şimdi</div>
+            </div>
+        </div>
+        <div class="chatbot-input-area">
+            <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Mesajını yaz..." maxlength="500">
+            <button class="chatbot-send" onclick="sendMessage()">📤</button>
+        </div>
+    </div>
+
+    <!-- Chatbot Toggle -->
+    <button class="chatbot-toggle" id="chatbotToggle">🤖</button>
+
+
+   <!-- Scripts -->
+    <script src="firebase-config.js"></script>
+    <script src="rag/document-processor.js"></script>
+    <script src="rag/vector-store.js"></script>
+    <script src="rag/retrieval-system.js"></script>
+    <script src="agents/summary-agent.js"></script>
+    <script src="data.js"></script>
+    <script src="auth.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="app.js"></script>
+</body>
+</body>
+</html>
